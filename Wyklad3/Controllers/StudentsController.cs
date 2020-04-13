@@ -31,6 +31,7 @@ namespace Wyklad3.Controllers
             {
                 com.Connection = con;
                 com.CommandText = "select s.FirstName, s.LastName, s.BirthDate, st.Name, e.Semester from Student s join Enrollment e on e.IdEnrollment = s.IdEnrollment join Studies st on st.IdStudy = e.IdStudy";
+ 
                 con.Open();
 
                 SqlDataReader dr = com.ExecuteReader();
@@ -55,15 +56,38 @@ namespace Wyklad3.Controllers
         }
         //[FromRoute], [FromBody], [FromQuery]
         //1. URL segment
-        [HttpGet("{id}")]
-        public IActionResult GetStudent([FromRoute]int id) //action method
+        [HttpGet("{indexNumber}")]
+        public IActionResult GetStudent(string indexNumber) //action method
         {
-            if (id == 1)
+            using (SqlConnection con = new SqlConnection(conString))
+            using (SqlCommand com = new SqlCommand())
             {
-                return Ok("Jan");
-            }
+                com.Connection = con;
+                com.CommandText = "select s.FirstName, s.LastName, s.BirthDate, st.Name, e.Semester from Student s join Enrollment e on e.IdEnrollment = s.IdEnrollment join Studies st on st.IdStudy = e.IdStudy where indexnumber = @index";
 
-            return NotFound("Nie ma student!!");
+
+                SqlParameter par = new SqlParameter();
+                par.Value = indexNumber;
+                par.ParameterName = "index";
+                com.Parameters.Add(par);
+
+
+                con.Open();
+                var dr = com.ExecuteReader();
+                if(dr.Read())
+                {
+                    var st = new StudentInfoDTO();
+
+                    st.FirstName = dr["FirstName"].ToString();
+                    st.LastName = dr["LastName"].ToString();
+                    st.BirthDate = dr["BirthDate"].ToString();
+                    st.Name = dr["Name"].ToString();
+                    st.Semester = dr["Semester"].ToString();
+                    return Ok(st);
+
+                }
+                return NotFound();
+            }
         }
 
         //3. Body - cialo zadan
