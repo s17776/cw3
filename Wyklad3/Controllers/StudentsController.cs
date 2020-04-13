@@ -30,7 +30,7 @@ namespace Wyklad3.Controllers
             using (SqlCommand com = new SqlCommand())
             {
                 com.Connection = con;
-                com.CommandText = "select s.FirstName, s.LastName, s.BirthDate, st.Name, e.Semester from Student s join Enrollment e on e.IdEnrollment = s.IdEnrollment join Studies st on st.IdStudy = e.IdStudy";
+                com.CommandText = " select s.FirstName, s.LastName, s.BirthDate, st.Name, e.Semester from Student s join Enrollment e on e.IdEnrollment = s.IdEnrollment join Studies st on st.IdStudy = e.IdStudy";
                 con.Open();
 
                 SqlDataReader dr = com.ExecuteReader();
@@ -63,7 +63,7 @@ namespace Wyklad3.Controllers
                 return Ok("Jan");
             }
 
-            return NotFound("Student was not found");
+            return NotFound("Nie ma studenta");
         }
 
         //3. Body - cialo zadan
